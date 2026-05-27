@@ -21,13 +21,7 @@ export const ROLES = {
   'ap-controller': { label: 'Contrôleur PA', icon: '⚡',  color: '#F472B6' },
 }
 
-export const TIERS = {
-  SS: { label: 'SS', color: '#FF2D87' },
-  S:  { label: 'S',  color: '#FFD200' },
-  A:  { label: 'A',  color: '#38BDF8' },
-  B:  { label: 'B',  color: '#4ADE80' },
-  C:  { label: 'C',  color: 'rgba(220,220,240,0.45)' },
-}
+export const TIERS = ['SS', 'S', 'A', 'B', 'C']
 
 export const ESPERS = [
 
