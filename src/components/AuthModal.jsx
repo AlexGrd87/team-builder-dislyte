@@ -19,8 +19,9 @@ export default function AuthModal({ onClose }) {
           background: '#0B0A1C',
           border: '1px solid rgba(255,45,135,0.25)',
           borderRadius: '20px',
-          padding: '40px 36px',
-          width: '380px',
+          padding: 'clamp(24px, 5vw, 40px) clamp(18px, 5vw, 36px)',
+          width: '90vw',
+          maxWidth: '420px',
           boxShadow: '0 0 60px rgba(255,45,135,0.12), 0 24px 60px rgba(0,0,0,0.6)',
           position: 'relative',
         }}

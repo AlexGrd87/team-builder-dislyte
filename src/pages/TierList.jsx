@@ -1,5 +1,6 @@
 ﻿import { useState } from 'react'
 import { ESPERS, ELEMENTS, ROLES, TIERS } from '../data/espers.js'
+import { useIsMobile } from '../hooks/useMobile.js'
 
 const MODES_FILTER = [
   { id: 'global', label: 'Global' },
@@ -32,6 +33,7 @@ function getTierForMode(esper, mode) {
 }
 
 export default function TierList({ onNavigate }) {
+  const isMobile = useIsMobile()
   const [mode, setMode] = useState('global')
   const [filterRole, setFilterRole] = useState(null)
   const [filterEl, setFilterEl] = useState(null)
@@ -67,7 +69,7 @@ export default function TierList({ onNavigate }) {
         <div style={{ fontSize: '11px', fontFamily: 'var(--font-display)', color: 'var(--text-muted)', letterSpacing: '2px', marginBottom: '10px' }}>
           MODE DE JEU
         </div>
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: isMobile ? 'nowrap' : 'wrap', overflowX: isMobile ? 'auto' : 'visible', scrollbarWidth: 'none', paddingBottom: isMobile ? '4px' : '0' }}>
           {MODES_FILTER.map(m => (
             <button
               key={m.id}
@@ -188,6 +190,7 @@ export default function TierList({ onNavigate }) {
                       isHovered={hovered === esper.id}
                       onHover={setHovered}
                       onNavigate={onNavigate}
+                      isMobile={isMobile}
                     />
                   ))}
               </div>
@@ -242,14 +245,15 @@ export default function TierList({ onNavigate }) {
   )
 }
 
-function TierEsperChip({ esper, tierColor, mode, isHovered, onHover, onNavigate }) {
+function TierEsperChip({ esper, tierColor, mode, isHovered, onHover, onNavigate, isMobile }) {
   const el = ELEMENTS[esper.element]
   const modeRating = mode !== 'global' ? esper.modes?.[mode] : null
 
   return (
     <div
-      onMouseEnter={() => onHover(esper.id)}
-      onMouseLeave={() => onHover(null)}
+      onMouseEnter={() => !isMobile && onHover(esper.id)}
+      onMouseLeave={() => !isMobile && onHover(null)}
+      onClick={() => isMobile && onHover(isHovered ? null : esper.id)}
       style={{
         position: 'relative',
         display: 'flex',
@@ -291,7 +295,7 @@ function TierEsperChip({ esper, tierColor, mode, isHovered, onHover, onNavigate 
         )}
       </div>
 
-      {/* Tooltip on hover */}
+      {/* Tooltip on hover / tap */}
       {isHovered && (
         <div style={{
           position: 'absolute',
@@ -302,11 +306,12 @@ function TierEsperChip({ esper, tierColor, mode, isHovered, onHover, onNavigate 
           border: `1px solid ${el.color}30`,
           borderRadius: '10px',
           padding: '12px 16px',
-          width: '220px',
+          width: '200px',
+          maxWidth: '80vw',
           zIndex: 100,
           animation: 'fadeIn 100ms both',
           boxShadow: '0 8px 30px rgba(0,0,0,0.5)',
-          pointerEvents: 'none',
+          pointerEvents: isMobile ? 'auto' : 'none',
         }}>
           <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, marginBottom: '2px' }}>{esper.name}</div>
           <div style={{ fontSize: '11px', color: el.color, marginBottom: '8px' }}>{esper.divinity} · {ROLES[esper.role]?.label}</div>

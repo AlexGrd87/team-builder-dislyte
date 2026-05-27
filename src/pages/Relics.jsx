@@ -1,6 +1,7 @@
 ﻿import { useState } from 'react'
 import { RELIC_SETS, MAIN_STATS, SUBSTAT_PRIORITY } from '../data/relics.js'
 import { ROLES } from '../data/espers.js'
+import { useIsMobile } from '../hooks/useMobile.js'
 
 const ROLE_BUILDS = [
   {
@@ -61,6 +62,7 @@ const ROLE_BUILDS = [
 ]
 
 export default function Relics() {
+  const isMobile = useIsMobile()
   const [activeTab, setActiveTab] = useState('sets')
   const [filterType, setFilterType] = useState('all')
 
@@ -80,28 +82,39 @@ export default function Relics() {
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: '4px', marginBottom: '36px', borderBottom: '1px solid var(--border)' }}>
+      <div style={{
+        display: 'flex',
+        gap: '4px',
+        marginBottom: '36px',
+        borderBottom: '1px solid var(--border)',
+        overflowX: isMobile ? 'auto' : 'visible',
+        scrollbarWidth: 'none',
+        WebkitOverflowScrolling: 'touch',
+        flexShrink: 0,
+      }}>
         {[
-          { id: 'sets', label: '⚙️ Tous les Sets' },
-          { id: 'builds', label: '🎯 Builds par Rôle' },
-          { id: 'stats', label: '📊 Stats Principales' },
-          { id: 'tips', label: '💡 Conseils' },
+          { id: 'sets',   label: isMobile ? '⚙️ Sets'   : '⚙️ Tous les Sets' },
+          { id: 'builds', label: isMobile ? '🎯 Builds'  : '🎯 Builds par Rôle' },
+          { id: 'stats',  label: isMobile ? '📊 Stats'   : '📊 Stats Principales' },
+          { id: 'tips',   label: isMobile ? '💡 Conseils': '💡 Conseils' },
         ].map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             style={{
-              padding: '12px 20px',
+              padding: isMobile ? '10px 14px' : '12px 20px',
               background: 'none',
               border: 'none',
               borderBottom: activeTab === tab.id ? '2px solid var(--purple)' : '2px solid transparent',
               color: activeTab === tab.id ? 'var(--purple)' : 'var(--text-secondary)',
               fontFamily: 'var(--font-ui)',
-              fontSize: '14px',
+              fontSize: isMobile ? '12px' : '14px',
               fontWeight: 700,
               cursor: 'pointer',
               transition: 'all 150ms',
               marginBottom: '-1px',
+              whiteSpace: 'nowrap',
+              flexShrink: 0,
             }}
           >
             {tab.label}
@@ -159,8 +172,8 @@ export default function Relics() {
             const set4 = RELIC_SETS.find(r => r.id === build.set4)
             const set2 = RELIC_SETS.find(r => r.id === build.set2)
             return (
-              <div key={build.role} className="card" style={{ padding: '28px' }}>
-                <div style={{ display: 'flex', gap: '24px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+              <div key={build.role} className="card" style={{ padding: isMobile ? '16px' : '28px' }}>
+                <div style={{ display: 'flex', gap: isMobile ? '14px' : '24px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
                   {/* Role header */}
                   <div style={{ minWidth: '160px' }}>
                     <div style={{

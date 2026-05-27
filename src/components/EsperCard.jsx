@@ -1,4 +1,5 @@
 ﻿import { ELEMENTS, ROLES } from '../data/espers.js'
+import { useIsMobile } from '../hooks/useMobile.js'
 
 const ELEMENT_BG = {
   flow:    'radial-gradient(ellipse at top, rgba(74,158,255,0.25) 0%, transparent 70%)',
@@ -13,6 +14,7 @@ const TIER_COLORS = {
 }
 
 export default function EsperCard({ esper, onClick, compact = false, selected = false }) {
+  const isMobile = useIsMobile()
   if (!esper) return null
 
   const el = ELEMENTS[esper.element]
@@ -38,7 +40,7 @@ export default function EsperCard({ esper, onClick, compact = false, selected = 
         boxShadow: selected ? '0 0 20px rgba(255,45,135,0.2)' : 'none',
       }}
       onMouseEnter={e => {
-        if (!selected) {
+        if (!selected && !isMobile) {
           e.currentTarget.style.borderColor = 'rgba(255,45,135,0.3)'
           e.currentTarget.style.background = 'rgba(255,255,255,0.06)'
           e.currentTarget.style.transform = 'translateY(-2px)'
@@ -46,7 +48,7 @@ export default function EsperCard({ esper, onClick, compact = false, selected = 
         }
       }}
       onMouseLeave={e => {
-        if (!selected) {
+        if (!selected && !isMobile) {
           e.currentTarget.style.borderColor = 'var(--border)'
           e.currentTarget.style.background = 'var(--bg-card)'
           e.currentTarget.style.transform = 'translateY(0)'

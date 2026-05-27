@@ -1,5 +1,6 @@
 ﻿import { ESPERS, ELEMENTS, ROLES } from '../data/espers.js'
 import { MODES } from '../data/modes.js'
+import { useIsMobile } from '../hooks/useMobile.js'
 
 const STATS = [
   { value: ESPERS.length + '+', label: 'Espers documentés' },
@@ -11,12 +12,13 @@ const STATS = [
 const FEATURED_IDS = ['gaius', 'unas', 'clara', 'gabrielle', 'abigail']
 
 export default function Home({ onNavigate }) {
+  const isMobile = useIsMobile()
   const featured = FEATURED_IDS.map(id => ESPERS.find(e => e.id === id)).filter(Boolean)
 
   return (
     <div>
       {/* ── Hero ─────────────────────────────────────────────────────── */}
-      <section style={{ position: 'relative', minHeight: '85vh', display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
+      <section style={{ position: 'relative', minHeight: isMobile ? '60vh' : '85vh', display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
         {/* Animated background */}
         <div style={{
           position: 'absolute',
@@ -50,7 +52,7 @@ export default function Home({ onNavigate }) {
           }} />
         ))}
 
-        <div className="page" style={{ position: 'relative', zIndex: 1, paddingTop: '60px', paddingBottom: '60px' }}>
+        <div className="page" style={{ position: 'relative', zIndex: 1, paddingTop: isMobile ? '32px' : '60px', paddingBottom: isMobile ? '32px' : '60px' }}>
           <div style={{ maxWidth: '700px' }}>
             {/* Eyebrow */}
             <div style={{
@@ -92,10 +94,10 @@ export default function Home({ onNavigate }) {
             </h1>
 
             <p style={{
-              fontSize: '18px',
+              fontSize: 'clamp(14px, 3.5vw, 18px)',
               color: 'var(--text-secondary)',
               lineHeight: 1.7,
-              marginBottom: '40px',
+              marginBottom: isMobile ? '28px' : '40px',
               maxWidth: '540px',
               animation: 'fadeIn 600ms 200ms both',
             }}>
@@ -104,7 +106,7 @@ export default function Home({ onNavigate }) {
             </p>
 
             {/* CTAs */}
-            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', animation: 'fadeIn 600ms 300ms both' }}>
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', animation: 'fadeIn 600ms 300ms both', flexDirection: isMobile ? 'column' : 'row' }}>
               <button className="btn btn-primary" onClick={() => onNavigate('team')}>
                 👥 Créer ma Team
               </button>
@@ -166,13 +168,13 @@ export default function Home({ onNavigate }) {
       </section>
 
       {/* ── Quick access ──────────────────────────────────────────────── */}
-      <section className="page" style={{ paddingTop: '60px', paddingBottom: '60px' }}>
+      <section className="page" style={{ paddingTop: isMobile ? '40px' : '60px', paddingBottom: isMobile ? '40px' : '60px' }}>
         <div className="section-header">
           <h2 className="section-title" style={{ color: 'var(--pink)' }}>Accès Rapide</h2>
           <div className="section-header-line" />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
           <QuickCard
             icon="👥"
             title="Team Builder"
@@ -182,6 +184,7 @@ export default function Home({ onNavigate }) {
             page="team"
             onNavigate={onNavigate}
             label="Construire une team →"
+            isMobile={isMobile}
           />
           <QuickCard
             icon="🏆"
@@ -192,6 +195,7 @@ export default function Home({ onNavigate }) {
             page="tierlist"
             onNavigate={onNavigate}
             label="Voir la tier list →"
+            isMobile={isMobile}
           />
           <QuickCard
             icon="⚙️"
@@ -202,6 +206,7 @@ export default function Home({ onNavigate }) {
             page="relics"
             onNavigate={onNavigate}
             label="Optimiser mes relics →"
+            isMobile={isMobile}
           />
           <QuickCard
             icon="📖"
@@ -212,19 +217,20 @@ export default function Home({ onNavigate }) {
             page="modes"
             onNavigate={onNavigate}
             label="Lire le guide →"
+            isMobile={isMobile}
           />
         </div>
       </section>
 
       {/* ── Progression roadmap ───────────────────────────────────────── */}
       <section style={{ background: 'rgba(255,255,255,0.015)', borderTop: '1px solid var(--border)' }}>
-        <div className="page" style={{ paddingTop: '60px', paddingBottom: '60px' }}>
+        <div className="page" style={{ paddingTop: isMobile ? '40px' : '60px', paddingBottom: isMobile ? '40px' : '60px' }}>
           <div className="section-header">
             <h2 className="section-title" style={{ color: 'var(--gold)' }}>Roadmap F2P</h2>
             <div className="section-header-line" style={{ background: 'linear-gradient(90deg, rgba(255,210,0,0.3), transparent)' }} />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
             {[
               {
                 phase: '🌱 EARLY', color: '#52ff8a', days: 'Chapitres 1–6',
@@ -276,7 +282,7 @@ export default function Home({ onNavigate }) {
       </section>
 
       {/* ── Elements overview ─────────────────────────────────────────── */}
-      <section className="page" style={{ paddingTop: '60px', paddingBottom: '80px' }}>
+      <section className="page" style={{ paddingTop: isMobile ? '40px' : '60px', paddingBottom: isMobile ? '40px' : '80px' }}>
         <div className="section-header">
           <h2 className="section-title" style={{ color: 'var(--purple)' }}>Système Élémentaire</h2>
           <div className="section-header-line" style={{ background: 'linear-gradient(90deg, rgba(139,92,246,0.3), transparent)' }} />
@@ -366,17 +372,19 @@ function FeaturedEsperBadge({ esper, delay }) {
   )
 }
 
-function QuickCard({ icon, title, desc, color, gradient, page, onNavigate, label }) {
+function QuickCard({ icon, title, desc, color, gradient, page, onNavigate, label, isMobile }) {
   return (
-    <div className="card" style={{ padding: '28px', position: 'relative', overflow: 'hidden', cursor: 'pointer' }}
+    <div className="card" style={{ padding: isMobile ? '20px' : '28px', position: 'relative', overflow: 'hidden', cursor: 'pointer' }}
       onClick={() => onNavigate(page)}
       onMouseEnter={e => {
+        if (isMobile) return
         e.currentTarget.style.borderColor = color
         e.currentTarget.style.background = gradient
         e.currentTarget.style.transform = 'translateY(-3px)'
         e.currentTarget.style.boxShadow = `0 12px 40px rgba(0,0,0,0.3), 0 0 30px ${gradient}`
       }}
       onMouseLeave={e => {
+        if (isMobile) return
         e.currentTarget.style.borderColor = 'var(--border)'
         e.currentTarget.style.background = 'var(--bg-card)'
         e.currentTarget.style.transform = 'none'
