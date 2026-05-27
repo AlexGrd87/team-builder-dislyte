@@ -4,11 +4,13 @@ import { useAuth } from '../context/AuthContext.jsx'
 import { useBox } from '../hooks/useBox.js'
 import { useBuilds } from '../hooks/useBuilds.js'
 import { RELIC_SETS } from '../data/relics.js'
+import { useIsMobile } from '../hooks/useMobile.js'
 
 const TIER_ORDER = { SS: 0, S: 1, A: 2, B: 3, C: 4 }
 const TIER_COLORS = { SS: '#FF2D87', S: '#FFD200', A: '#38BDF8', B: '#4ADE80', C: '#aaa' }
 
 export default function MyBox({ onNavigate }) {
+  const isMobile = useIsMobile()
   const { user } = useAuth()
   const { box, loading: boxLoading, getEsper, upsertEsper, setNotOwned } = useBox()
   const { builds, getBuildsForEsper, saveBuild, deleteBuild } = useBuilds()
@@ -111,13 +113,20 @@ export default function MyBox({ onNavigate }) {
         ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: selectedEsper ? '1fr 380px' : '1fr', gap: '24px', alignItems: 'start' }}>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: (!isMobile && selectedEsper) ? '1fr 380px' : '1fr',
+        gap: '24px',
+        alignItems: 'start',
+      }}>
 
         {/* Grid d'Espers */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))',
-          gap: '8px',
+          gridTemplateColumns: isMobile
+            ? 'repeat(auto-fill, minmax(80px, 1fr))'
+            : 'repeat(auto-fill, minmax(100px, 1fr))',
+          gap: isMobile ? '6px' : '8px',
         }}>
           {filtered.map(esper => {
             const el = ELEMENTS[esper.element]
@@ -186,8 +195,8 @@ export default function MyBox({ onNavigate }) {
           })}
         </div>
 
-        {/* Panel détail */}
-        {selectedEsper && (
+        {/* Panel détail — desktop inline */}
+        {selectedEsper && !isMobile && (
           <div style={{ position: 'sticky', top: '80px' }}>
             <EsperBoxPanel
               esper={selectedEsper}
@@ -207,6 +216,55 @@ export default function MyBox({ onNavigate }) {
           </div>
         )}
       </div>
+
+      {/* Panel détail — mobile bottom sheet */}
+      {selectedEsper && isMobile && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 3000,
+            background: 'rgba(0,0,0,0.7)',
+            backdropFilter: 'blur(6px)',
+            display: 'flex',
+            alignItems: 'flex-end',
+          }}
+          onClick={() => setSelected(null)}
+        >
+          <div
+            style={{
+              width: '100%',
+              maxHeight: '88vh',
+              overflowY: 'auto',
+              borderRadius: '20px 20px 0 0',
+              background: '#0B0A1C',
+              border: '1px solid rgba(255,45,135,0.2)',
+              borderBottom: 'none',
+              animation: 'fadeIn 200ms both',
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '12px 0 4px' }}>
+              <div style={{ width: '40px', height: '4px', borderRadius: '2px', background: 'rgba(255,255,255,0.15)' }} />
+            </div>
+            <EsperBoxPanel
+              esper={selectedEsper}
+              entry={boxEntry}
+              builds={esperBuilds}
+              owned={ownedIds.has(selectedEsper.id)}
+              onToggleOwned={() => {
+                if (ownedIds.has(selectedEsper.id)) setNotOwned(selectedEsper.id)
+                else upsertEsper(selectedEsper.id, { stars: 5, ascension: 0, resonance: 0, lvl: 1 })
+              }}
+              onUpdateEntry={(fields) => upsertEsper(selectedEsper.id, fields)}
+              onNewBuild={() => { setEditingBuild({ esper_id: selectedEsper.id, build_name: 'Mon Build', set4: '', set2: '', ring_stat: '', helmet_stat: '', boots_stat: '', substats: [], notes: '' }); setBuildModal(true) }}
+              onEditBuild={(b) => { setEditingBuild(b); setBuildModal(true) }}
+              onDeleteBuild={deleteBuild}
+              saving={saving}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Modal Build */}
       {buildModal && editingBuild && (

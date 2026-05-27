@@ -988,12 +988,80 @@ body {
   border: 1px solid rgba(255,255,255,0.06);
 }
 
-/* ── Responsive ──────────────────────────────────── */
+/* ================================================================
+   RESPONSIVE — Mobile first
+   ================================================================ */
+
+/* ── Tablet (≤1024px) ────────────────────────── */
+@media (max-width: 1024px) {
+  .page { padding-left: 20px; padding-right: 20px; }
+  .feature-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ── Mobile (≤768px) ─────────────────────────── */
 @media (max-width: 768px) {
-  .page { padding: 70px 16px 40px; }
-  .hero-stats { gap: 28px; flex-wrap: wrap; }
-  .element-grid { grid-template-columns: repeat(3, 1fr); }
-  .nav { padding: 0 16px; }
-  .nav-logo { margin-right: 16px; font-size: 13px; }
-  .nav-link { padding: 5px 8px; font-size: 12px; }
+  /* Layout */
+  .page { padding: 70px 14px 48px; }
+
+  /* Nav */
+  .nav { padding: 0 14px; }
+
+  /* Sections */
+  .section-header { flex-wrap: wrap; gap: 10px; }
+  .section-header-line { min-width: 100%; order: 3; }
+  .section-title { font-size: 20px; }
+
+  /* Hero */
+  .hero-stats {
+    gap: 20px 36px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 40px;
+  }
+  .hero-stat-value { font-size: 26px; }
+  .hero-actions { flex-direction: column; align-items: stretch; }
+  .hero-actions .btn { justify-content: center; }
+
+  /* Element grid : 5 cols → 3 */
+  .element-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .element-emoji { font-size: 22px; }
+  .element-name { font-size: 9px; }
+
+  /* Feature cards */
+  .feature-grid { grid-template-columns: 1fr; }
+
+  /* Tier list */
+  .tier-row { flex-direction: column; gap: 8px; }
+  .tier-label {
+    width: 100%;
+    min-height: 36px;
+    flex-direction: row;
+    gap: 8px;
+    justify-content: flex-start;
+    padding: 0 12px;
+    font-size: 16px;
+  }
+  .tier-cards { gap: 6px; }
+
+  /* Roadmap */
+  .roadmap::before { left: 16px; }
+  .roadmap-item { padding-left: 44px; }
+  .roadmap-dot { left: 9px; }
+
+  /* Disable hover transforms on touch */
+  .card:hover { transform: none; }
+  .feature-card:hover { transform: none; }
+  .relic-set-card:hover { transform: none; }
+  .mode-card:hover { transform: none; }
+}
+
+/* ── Petits mobiles (≤480px) ─────────────────── */
+@media (max-width: 480px) {
+  .page { padding: 68px 12px 48px; }
+  .section-title { font-size: 18px; }
+  .hero-stat-value { font-size: 22px; }
+  .element-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .element-card { padding: 12px 6px; }
+  .tier-label { font-size: 14px; }
+  .btn { padding: 9px 16px; font-size: 13px; }
 }

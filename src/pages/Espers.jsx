@@ -2,10 +2,12 @@
 import { ESPERS, ELEMENTS, ROLES } from '../data/espers.js'
 import { RELIC_SETS } from '../data/relics.js'
 import EsperCard from '../components/EsperCard.jsx'
+import { useIsMobile } from '../hooks/useMobile.js'
 
 const TIER_ORDER = { SS: 0, S: 1, A: 2, B: 3, C: 4 }
 
 export default function Espers() {
+  const isMobile = useIsMobile()
   const [selected, setSelected] = useState(null)
   const [search, setSearch] = useState('')
   const [filterEl, setFilterEl] = useState(null)
@@ -44,7 +46,12 @@ export default function Espers() {
         <div className="section-header-line" style={{ background: 'linear-gradient(90deg, rgba(139,92,246,0.3), transparent)' }} />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: selectedEsper ? '1fr 400px' : '1fr', gap: '28px', alignItems: 'start' }}>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: (!isMobile && selectedEsper) ? '1fr 400px' : '1fr',
+        gap: '28px',
+        alignItems: 'start',
+      }}>
         {/* Left: list */}
         <div>
           {/* Search & sort */}
@@ -124,7 +131,7 @@ export default function Espers() {
           {/* Grid */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: `repeat(auto-fill, minmax(${selectedEsper ? '140px' : '180px'}, 1fr))`,
+            gridTemplateColumns: `repeat(auto-fill, minmax(${(!isMobile && selectedEsper) ? '140px' : '160px'}, 1fr))`,
             gap: '12px',
           }}>
             {filtered.map(esper => (
@@ -144,13 +151,49 @@ export default function Espers() {
           </div>
         </div>
 
-        {/* Right: detail */}
-        {selectedEsper && (
+        {/* Right: detail — desktop inline, mobile bottom sheet */}
+        {selectedEsper && !isMobile && (
           <div style={{ position: 'sticky', top: '80px' }}>
             <EsperDetailFull esper={selectedEsper} onClose={() => setSelected(null)} />
           </div>
         )}
       </div>
+
+      {/* Mobile: bottom sheet overlay */}
+      {selectedEsper && isMobile && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 3000,
+            background: 'rgba(0,0,0,0.7)',
+            backdropFilter: 'blur(6px)',
+            display: 'flex',
+            alignItems: 'flex-end',
+          }}
+          onClick={() => setSelected(null)}
+        >
+          <div
+            style={{
+              width: '100%',
+              maxHeight: '88vh',
+              overflowY: 'auto',
+              borderRadius: '20px 20px 0 0',
+              background: '#0B0A1C',
+              border: '1px solid rgba(255,45,135,0.2)',
+              borderBottom: 'none',
+              animation: 'fadeIn 200ms both',
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Handle */}
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '12px 0 4px' }}>
+              <div style={{ width: '40px', height: '4px', borderRadius: '2px', background: 'rgba(255,255,255,0.15)' }} />
+            </div>
+            <EsperDetailFull esper={selectedEsper} onClose={() => setSelected(null)} />
+          </div>
+        </div>
+      )}
     </div>
   )
 }

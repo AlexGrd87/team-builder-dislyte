@@ -1,8 +1,10 @@
 ﻿import { useState } from 'react'
 import { MODES } from '../data/modes.js'
 import { ESPERS, ELEMENTS, ROLES } from '../data/espers.js'
+import { useIsMobile } from '../hooks/useMobile.js'
 
 export default function Modes({ onNavigate }) {
+  const isMobile = useIsMobile()
   const [selected, setSelected] = useState('histoire')
   const mode = MODES.find(m => m.id === selected)
 
@@ -18,58 +20,103 @@ export default function Modes({ onNavigate }) {
         <div className="section-header-line" style={{ background: 'linear-gradient(90deg, rgba(255,82,82,0.3), transparent)' }} />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr', gap: '24px', alignItems: 'start' }}>
-        {/* Sidebar mode list */}
-        <div style={{ position: 'sticky', top: '80px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-          {MODES.map(m => (
-            <button
-              key={m.id}
-              onClick={() => setSelected(m.id)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                padding: '12px 16px',
-                borderRadius: '10px',
-                border: selected === m.id ? '1px solid rgba(255,45,135,0.3)' : '1px solid transparent',
-                background: selected === m.id ? 'rgba(255,45,135,0.06)' : 'transparent',
-                color: selected === m.id ? 'var(--pink)' : 'var(--text-secondary)',
-                fontFamily: 'var(--font-ui)',
-                fontSize: '13px',
-                fontWeight: selected === m.id ? 700 : 400,
-                cursor: 'pointer',
-                textAlign: 'left',
-                transition: 'all 150ms',
-              }}
-              onMouseEnter={e => {
-                if (selected !== m.id) {
-                  e.currentTarget.style.background = 'rgba(255,255,255,0.04)'
-                  e.currentTarget.style.color = 'var(--text-primary)'
-                }
-              }}
-              onMouseLeave={e => {
-                if (selected !== m.id) {
-                  e.currentTarget.style.background = 'transparent'
-                  e.currentTarget.style.color = 'var(--text-secondary)'
-                }
-              }}
-            >
-              <span style={{ fontSize: '18px', flexShrink: 0 }}>{m.icon}</span>
-              <div>
-                <div style={{ lineHeight: 1.2 }}>{m.name.replace('Miracle Rituel : ', '')}</div>
-                <div style={{ fontSize: '10px', opacity: 0.6, marginTop: '2px' }}>{m.type}</div>
-              </div>
-            </button>
-          ))}
-        </div>
-
-        {/* Mode detail */}
-        {mode && (
-          <div className="animate-fade" key={mode.id}>
-            <ModeDetail mode={mode} onNavigate={onNavigate} />
+      {isMobile ? (
+        /* ── Mobile : tabs horizontaux scrollables ── */
+        <div>
+          <div style={{
+            display: 'flex',
+            gap: '8px',
+            overflowX: 'auto',
+            paddingBottom: '12px',
+            marginBottom: '20px',
+            scrollbarWidth: 'none',
+            WebkitOverflowScrolling: 'touch',
+          }}>
+            {MODES.map(m => (
+              <button
+                key={m.id}
+                onClick={() => setSelected(m.id)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '8px 14px',
+                  borderRadius: '20px',
+                  border: selected === m.id ? '1px solid rgba(255,45,135,0.4)' : '1px solid var(--border)',
+                  background: selected === m.id ? 'rgba(255,45,135,0.12)' : 'var(--bg-card)',
+                  color: selected === m.id ? 'var(--pink)' : 'var(--text-secondary)',
+                  fontFamily: 'var(--font-ui)',
+                  fontSize: '12px',
+                  fontWeight: selected === m.id ? 700 : 500,
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
+                  transition: 'all 150ms',
+                }}
+              >
+                <span>{m.icon}</span>
+                {m.name.replace('Miracle Rituel : ', '').replace('Miracle Rituel: ', '')}
+              </button>
+            ))}
           </div>
-        )}
-      </div>
+          {mode && (
+            <div className="animate-fade" key={mode.id}>
+              <ModeDetail mode={mode} onNavigate={onNavigate} />
+            </div>
+          )}
+        </div>
+      ) : (
+        /* ── Desktop : sidebar + contenu ── */
+        <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr', gap: '24px', alignItems: 'start' }}>
+          <div style={{ position: 'sticky', top: '80px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            {MODES.map(m => (
+              <button
+                key={m.id}
+                onClick={() => setSelected(m.id)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  padding: '12px 16px',
+                  borderRadius: '10px',
+                  border: selected === m.id ? '1px solid rgba(255,45,135,0.3)' : '1px solid transparent',
+                  background: selected === m.id ? 'rgba(255,45,135,0.06)' : 'transparent',
+                  color: selected === m.id ? 'var(--pink)' : 'var(--text-secondary)',
+                  fontFamily: 'var(--font-ui)',
+                  fontSize: '13px',
+                  fontWeight: selected === m.id ? 700 : 400,
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  transition: 'all 150ms',
+                }}
+                onMouseEnter={e => {
+                  if (selected !== m.id) {
+                    e.currentTarget.style.background = 'rgba(255,255,255,0.04)'
+                    e.currentTarget.style.color = 'var(--text-primary)'
+                  }
+                }}
+                onMouseLeave={e => {
+                  if (selected !== m.id) {
+                    e.currentTarget.style.background = 'transparent'
+                    e.currentTarget.style.color = 'var(--text-secondary)'
+                  }
+                }}
+              >
+                <span style={{ fontSize: '18px', flexShrink: 0 }}>{m.icon}</span>
+                <div>
+                  <div style={{ lineHeight: 1.2 }}>{m.name.replace('Miracle Rituel : ', '')}</div>
+                  <div style={{ fontSize: '10px', opacity: 0.6, marginTop: '2px' }}>{m.type}</div>
+                </div>
+              </button>
+            ))}
+          </div>
+          {mode && (
+            <div className="animate-fade" key={mode.id}>
+              <ModeDetail mode={mode} onNavigate={onNavigate} />
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }

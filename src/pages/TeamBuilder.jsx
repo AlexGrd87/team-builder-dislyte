@@ -5,6 +5,7 @@ import { analyzeTeam } from '../utils/teamAnalysis.js'
 import EsperCard, { EsperAvatar } from '../components/EsperCard.jsx'
 import { useTeams } from '../hooks/useTeams.js'
 import { useAuth } from '../context/AuthContext.jsx'
+import { useIsMobile } from '../hooks/useMobile.js'
 
 const TEAM_SIZE = 5
 const PRESET_TEAMS = [
@@ -39,6 +40,7 @@ const PRESET_TEAMS = [
 ]
 
 export default function TeamBuilder({ onOpenAuth }) {
+  const isMobile = useIsMobile()
   const { user } = useAuth()
   const { teams, saveTeam, deleteTeam } = useTeams()
   const [slots, setSlots] = useState(Array(TEAM_SIZE).fill(null))
@@ -213,13 +215,18 @@ export default function TeamBuilder({ onOpenAuth }) {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '28px', alignItems: 'start' }}>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr' : '1fr 380px',
+        gap: '28px',
+        alignItems: 'start',
+      }}>
         <div>
           {/* Team slots */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(5, 1fr)',
-            gap: '12px',
+            gridTemplateColumns: isMobile ? 'repeat(3, 1fr)' : 'repeat(5, 1fr)',
+            gap: isMobile ? '8px' : '12px',
             marginBottom: '28px',
           }}>
             {slots.map((esper, idx) => (
@@ -460,6 +467,7 @@ export default function TeamBuilder({ onOpenAuth }) {
           onSelect={selectEsper}
           onClose={() => setPickerOpen(false)}
           slotIdx={activeSlot}
+          isMobile={isMobile}
         />
       )}
     </div>
@@ -1061,7 +1069,7 @@ function TeamAnalysisPanel({ analysis, slots, captainIdx }) {
   )
 }
 
-function EsperPickerModal({ filteredEspers, search, setSearch, filterEl, setFilterEl, filterRole, setFilterRole, filterTier, setFilterTier, onSelect, onClose, slotIdx }) {
+function EsperPickerModal({ filteredEspers, search, setSearch, filterEl, setFilterEl, filterRole, setFilterRole, filterTier, setFilterTier, onSelect, onClose, slotIdx, isMobile }) {
   return (
     <div
       style={{
@@ -1070,9 +1078,9 @@ function EsperPickerModal({ filteredEspers, search, setSearch, filterEl, setFilt
         background: 'rgba(0,0,0,0.85)',
         zIndex: 2000,
         display: 'flex',
-        alignItems: 'flex-start',
+        alignItems: isMobile ? 'flex-end' : 'flex-start',
         justifyContent: 'center',
-        padding: '80px 24px 24px',
+        padding: isMobile ? '0' : '80px 24px 24px',
         backdropFilter: 'blur(8px)',
         animation: 'fadeIn 200ms both',
       }}
@@ -1082,9 +1090,9 @@ function EsperPickerModal({ filteredEspers, search, setSearch, filterEl, setFilt
         style={{
           background: 'rgba(10,10,30,0.98)',
           border: '1px solid rgba(255,45,135,0.2)',
-          borderRadius: '20px',
+          borderRadius: isMobile ? '20px 20px 0 0' : '20px',
           width: '100%',
-          maxWidth: '900px',
+          maxWidth: isMobile ? '100%' : '900px',
           maxHeight: '80vh',
           overflow: 'hidden',
           display: 'flex',
@@ -1092,9 +1100,15 @@ function EsperPickerModal({ filteredEspers, search, setSearch, filterEl, setFilt
         }}
         onClick={e => e.stopPropagation()}
       >
+        {/* Handle mobile */}
+        {isMobile && (
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '12px 0 4px' }}>
+            <div style={{ width: '40px', height: '4px', borderRadius: '2px', background: 'rgba(255,255,255,0.15)' }} />
+          </div>
+        )}
         {/* Modal header */}
         <div style={{
-          padding: '24px 28px',
+          padding: isMobile ? '12px 16px' : '24px 28px',
           borderBottom: '1px solid var(--border)',
           display: 'flex',
           alignItems: 'center',
