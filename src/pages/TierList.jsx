@@ -1,5 +1,5 @@
 ﻿import { useState } from 'react'
-import { ESPERS, ELEMENTS, ROLES, TIERS } from '../data/espers.js'
+import { ESPERS, ELEMENTS, ROLES, TIERS, RARITY_COLORS } from '../data/espers.js'
 import { useIsMobile } from '../hooks/useMobile.js'
 
 const MODES_FILTER = [
@@ -247,6 +247,7 @@ export default function TierList({ onNavigate }) {
 
 function TierEsperChip({ esper, tierColor, mode, isHovered, onHover, onNavigate, isMobile }) {
   const el = ELEMENTS[esper.element]
+  const rarityColor = RARITY_COLORS[esper.rarity] || '#fff'
   const modeRating = mode !== 'global' ? esper.modes?.[mode] : null
 
   return (
@@ -261,12 +262,10 @@ function TierEsperChip({ esper, tierColor, mode, isHovered, onHover, onNavigate,
         gap: '8px',
         padding: '8px 14px',
         borderRadius: '10px',
-        background: isHovered
-          ? `${el.color}18`
-          : `rgba(255,255,255,0.04)`,
+        background: isHovered ? `${el.color}18` : `rgba(255,255,255,0.04)`,
         border: isHovered
           ? `1px solid ${el.color}50`
-          : '1px solid var(--border)',
+          : `1px solid ${rarityColor}22`,
         cursor: 'default',
         transition: 'all 150ms',
         flexShrink: 0,
@@ -283,16 +282,28 @@ function TierEsperChip({ esper, tierColor, mode, isHovered, onHover, onNavigate,
         }}>
           {esper.name}
         </div>
-        {modeRating && mode !== 'global' && (
-          <div style={{
-            fontSize: '10px',
-            color: { SS: '#FF2D87', S: '#FFD200', A: '#38BDF8', B: '#4ADE80', C: '#aaa' }[modeRating],
-            fontFamily: 'var(--font-display)',
-            fontWeight: 700,
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+          {/* Étoiles rareté */}
+          <span style={{
+            fontSize: '9px',
+            color: rarityColor,
+            fontWeight: 900,
+            letterSpacing: '0px',
+            opacity: 0.85,
           }}>
-            {modeRating} {mode}
-          </div>
-        )}
+            {'★'.repeat(esper.rarity)}
+          </span>
+          {modeRating && mode !== 'global' && (
+            <span style={{
+              fontSize: '10px',
+              color: { SS: '#FF2D87', S: '#FFD200', A: '#38BDF8', B: '#4ADE80', C: '#aaa' }[modeRating],
+              fontFamily: 'var(--font-display)',
+              fontWeight: 700,
+            }}>
+              · {modeRating}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Tooltip on hover / tap */}
@@ -313,7 +324,10 @@ function TierEsperChip({ esper, tierColor, mode, isHovered, onHover, onNavigate,
           boxShadow: '0 8px 30px rgba(0,0,0,0.5)',
           pointerEvents: isMobile ? 'auto' : 'none',
         }}>
-          <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, marginBottom: '2px' }}>{esper.name}</div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2px' }}>
+            <span style={{ fontFamily: 'var(--font-ui)', fontWeight: 700 }}>{esper.name}</span>
+            <span style={{ fontSize: '10px', color: rarityColor, fontWeight: 900 }}>{'★'.repeat(esper.rarity)}</span>
+          </div>
           <div style={{ fontSize: '11px', color: el.color, marginBottom: '8px' }}>{esper.divinity} · {ROLES[esper.role]?.label}</div>
           <p style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
             {esper.description}

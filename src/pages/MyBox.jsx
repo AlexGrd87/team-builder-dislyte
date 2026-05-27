@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { ESPERS, ELEMENTS, ROLES } from '../data/espers.js'
+import { ESPERS, ELEMENTS, ROLES, RARITY_COLORS } from '../data/espers.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import { useBox } from '../hooks/useBox.js'
 import { useBuilds } from '../hooks/useBuilds.js'
@@ -133,6 +133,7 @@ export default function MyBox({ onNavigate }) {
             const owned = ownedIds.has(esper.id)
             const entry = getEsper(esper.id)
             const tierColor = TIER_COLORS[esper.tier]
+            const rarityColor = RARITY_COLORS[esper.rarity] || '#fff'
             const isSelected = selected === esper.id
 
             return (
@@ -142,50 +143,58 @@ export default function MyBox({ onNavigate }) {
                 style={{
                   position: 'relative',
                   borderRadius: '12px',
-                  border: isSelected ? `2px solid var(--pink)` : `1px solid ${owned ? el.color + '40' : 'rgba(255,255,255,0.06)'}`,
+                  border: isSelected
+                    ? `2px solid var(--pink)`
+                    : `1px solid ${owned ? rarityColor + '45' : rarityColor + '18'}`,
                   background: owned
                     ? `linear-gradient(160deg, ${el.color}18 0%, rgba(255,255,255,0.02) 100%)`
                     : 'rgba(255,255,255,0.02)',
                   padding: '12px 8px 10px',
                   cursor: 'pointer',
                   transition: 'all 160ms',
-                  opacity: owned ? 1 : 0.45,
+                  opacity: owned ? 1 : 0.4,
                   textAlign: 'center',
                   boxShadow: isSelected ? '0 0 16px rgba(255,45,135,0.25)' : 'none',
                 }}
                 onMouseEnter={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(-2px)' }}
-                onMouseLeave={e => { e.currentTarget.style.opacity = owned ? '1' : '0.45'; e.currentTarget.style.transform = 'none' }}
+                onMouseLeave={e => { e.currentTarget.style.opacity = owned ? '1' : '0.4'; e.currentTarget.style.transform = 'none' }}
               >
+                {/* Bande rareté en haut */}
+                <div style={{
+                  position: 'absolute', top: 0, left: 0, right: 0, height: '2px',
+                  borderRadius: '12px 12px 0 0',
+                  background: `linear-gradient(90deg, transparent, ${rarityColor}, transparent)`,
+                  opacity: owned ? 0.8 : 0.3,
+                }} />
+
                 {/* Tier */}
-                <div style={{ position: 'absolute', top: '5px', right: '6px', fontFamily: 'var(--font-display)', fontSize: '9px', fontWeight: 900, color: tierColor, textShadow: `0 0 8px ${tierColor}` }}>
+                <div style={{ position: 'absolute', top: '6px', right: '6px', fontFamily: 'var(--font-display)', fontSize: '9px', fontWeight: 900, color: tierColor, textShadow: `0 0 8px ${tierColor}` }}>
                   {esper.tier}
                 </div>
 
                 {/* Owned check */}
                 {owned && (
-                  <div style={{ position: 'absolute', top: '5px', left: '6px', width: '14px', height: '14px', borderRadius: '50%', background: '#4ADE80', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '8px' }}>✓</div>
+                  <div style={{ position: 'absolute', top: '6px', left: '6px', width: '14px', height: '14px', borderRadius: '50%', background: '#4ADE80', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '8px' }}>✓</div>
                 )}
 
                 {/* Avatar */}
                 <div style={{
                   width: '48px', height: '48px', borderRadius: '12px', margin: '0 auto 8px',
                   background: `linear-gradient(135deg, ${el.color}40, ${el.color}15)`,
-                  border: `2px solid ${el.color}50`,
+                  border: `2px solid ${rarityColor}60`,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: '22px',
-                  boxShadow: owned ? `0 0 14px ${el.color}35` : 'none',
+                  boxShadow: owned ? `0 0 14px ${el.color}35, 0 0 6px ${rarityColor}20` : 'none',
                 }}>
                   {el.emoji}
                 </div>
 
-                {/* Stars si possédé */}
-                {owned && entry && (
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '1px', marginBottom: '4px' }}>
-                    {Array.from({ length: entry.stars || 5 }).map((_, i) => (
-                      <span key={i} style={{ fontSize: '7px', color: '#FFD200' }}>★</span>
-                    ))}
-                  </div>
-                )}
+                {/* Étoiles rareté — toujours visibles */}
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '1px', marginBottom: '4px' }}>
+                  {Array.from({ length: esper.rarity }).map((_, i) => (
+                    <span key={i} style={{ fontSize: '7px', color: rarityColor, opacity: owned ? 1 : 0.5 }}>★</span>
+                  ))}
+                </div>
 
                 <div style={{ fontFamily: 'var(--font-ui)', fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {esper.name}

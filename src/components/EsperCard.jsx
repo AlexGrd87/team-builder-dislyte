@@ -1,4 +1,4 @@
-﻿import { ELEMENTS, ROLES } from '../data/espers.js'
+import { ELEMENTS, ROLES, RARITY_COLORS, RARITY_LABELS } from '../data/espers.js'
 import { useIsMobile } from '../hooks/useMobile.js'
 
 const ELEMENT_BG = {
@@ -20,42 +20,53 @@ export default function EsperCard({ esper, onClick, compact = false, selected = 
   const el = ELEMENTS[esper.element]
   const role = ROLES[esper.role]
   const tierColor = TIER_COLORS[esper.tier] || '#fff'
+  const rarityColor = RARITY_COLORS[esper.rarity] || '#fff'
 
   return (
     <div
       onClick={onClick}
       style={{
-        background: selected
-          ? `rgba(255,45,135,0.08)`
-          : `var(--bg-card)`,
+        background: selected ? `rgba(255,45,135,0.08)` : `var(--bg-card)`,
         border: selected
           ? '1px solid rgba(255,45,135,0.5)'
-          : `1px solid ${selected ? 'rgba(255,45,135,0.3)' : 'var(--border)'}`,
+          : `1px solid ${rarityColor}28`,
         borderRadius: '14px',
         padding: compact ? '12px' : '16px',
         cursor: onClick ? 'pointer' : 'default',
         transition: 'all 200ms',
         position: 'relative',
         overflow: 'hidden',
-        boxShadow: selected ? '0 0 20px rgba(255,45,135,0.2)' : 'none',
+        boxShadow: selected
+          ? '0 0 20px rgba(255,45,135,0.2)'
+          : `0 0 0 0 transparent`,
       }}
       onMouseEnter={e => {
         if (!selected && !isMobile) {
-          e.currentTarget.style.borderColor = 'rgba(255,45,135,0.3)'
+          e.currentTarget.style.borderColor = `${rarityColor}60`
           e.currentTarget.style.background = 'rgba(255,255,255,0.06)'
           e.currentTarget.style.transform = 'translateY(-2px)'
-          e.currentTarget.style.boxShadow = '0 8px 30px rgba(0,0,0,0.3)'
+          e.currentTarget.style.boxShadow = `0 8px 30px rgba(0,0,0,0.3), 0 0 12px ${rarityColor}15`
         }
       }}
       onMouseLeave={e => {
         if (!selected && !isMobile) {
-          e.currentTarget.style.borderColor = 'var(--border)'
+          e.currentTarget.style.borderColor = `${rarityColor}28`
           e.currentTarget.style.background = 'var(--bg-card)'
           e.currentTarget.style.transform = 'translateY(0)'
           e.currentTarget.style.boxShadow = 'none'
         }
       }}
     >
+      {/* Bande rareté en haut */}
+      <div style={{
+        position: 'absolute',
+        top: 0, left: 0, right: 0,
+        height: '2px',
+        background: `linear-gradient(90deg, transparent, ${rarityColor}, transparent)`,
+        opacity: 0.7,
+        pointerEvents: 'none',
+      }} />
+
       {/* Element gradient overlay */}
       <div style={{
         position: 'absolute',
@@ -79,6 +90,23 @@ export default function EsperCard({ esper, onClick, compact = false, selected = 
         {esper.tier}
       </div>
 
+      {/* Badge rareté (compact only) */}
+      {compact && (
+        <div style={{
+          position: 'absolute',
+          top: '8px',
+          left: '8px',
+          fontFamily: 'var(--font-display)',
+          fontSize: '9px',
+          fontWeight: 900,
+          color: rarityColor,
+          textShadow: `0 0 6px ${rarityColor}80`,
+          letterSpacing: '0.5px',
+        }}>
+          {esper.rarity}★
+        </div>
+      )}
+
       {/* Avatar */}
       <div style={{
         width: compact ? '48px' : '64px',
@@ -97,7 +125,7 @@ export default function EsperCard({ esper, onClick, compact = false, selected = 
       }}>
         {el.emoji}
 
-        {/* Rarity stars */}
+        {/* Rarity stars (non-compact) */}
         {!compact && (
           <div style={{
             position: 'absolute',
@@ -108,7 +136,7 @@ export default function EsperCard({ esper, onClick, compact = false, selected = 
             gap: '1px',
           }}>
             {Array.from({ length: esper.rarity }).map((_, i) => (
-              <span key={i} style={{ fontSize: '7px', color: '#FFD200' }}>★</span>
+              <span key={i} style={{ fontSize: '7px', color: rarityColor }}>★</span>
             ))}
           </div>
         )}
@@ -134,10 +162,18 @@ export default function EsperCard({ esper, onClick, compact = false, selected = 
           fontFamily: 'var(--font-body)',
           fontSize: '11px',
           color: 'var(--text-muted)',
-          marginBottom: '10px',
+          marginBottom: '6px',
           position: 'relative',
         }}>
           {esper.divinity}
+          <span style={{
+            marginLeft: '6px',
+            color: rarityColor,
+            fontSize: '10px',
+            fontWeight: 700,
+          }}>
+            · {RARITY_LABELS[esper.rarity]}
+          </span>
         </div>
       )}
 
@@ -159,18 +195,19 @@ export default function EsperCard({ esper, onClick, compact = false, selected = 
 export function EsperAvatar({ esper, size = 48 }) {
   if (!esper) return null
   const el = ELEMENTS[esper.element]
+  const rarityColor = RARITY_COLORS[esper.rarity] || '#fff'
   return (
     <div style={{
       width: size,
       height: size,
       borderRadius: Math.round(size * 0.2) + 'px',
       background: `linear-gradient(135deg, ${el.color}40, ${el.color}15)`,
-      border: `2px solid ${el.color}60`,
+      border: `2px solid ${rarityColor}70`,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       fontSize: size * 0.45 + 'px',
-      boxShadow: `0 0 15px ${el.color}30`,
+      boxShadow: `0 0 15px ${el.color}30, 0 0 8px ${rarityColor}20`,
       flexShrink: 0,
     }}>
       {el.emoji}

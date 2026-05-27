@@ -23,6 +23,18 @@ export const ROLES = {
 
 export const TIERS = ['SS', 'S', 'A', 'B', 'C']
 
+export const RARITY_COLORS = {
+  5: '#FFD200', // Légendaire — or
+  4: '#C084FC', // Épique — violet
+  3: '#60A5FA', // Rare — bleu
+}
+
+export const RARITY_LABELS = {
+  5: 'Légendaire',
+  4: 'Épique',
+  3: 'Rare',
+}
+
 export const ESPERS = [
 
   // ════════════════════ SS TIER ════════════════════
